@@ -24,7 +24,7 @@ block content
 				each err in errors
 					div #[strong= err.param] #{err.msg}
 				button.close(type="button" data-dismiss="alert" aria-label="Close")
-					span.icon-close(aria-hidden="true")
+					span.icon-forbid(aria-hidden="true")
 		input#email.form-control(type="email" name="email" placeholder="e-mail" value=email?email:'' required autofocus)
 		input#password.form-control(type="password" name="password" placeholder="password" required)
 		button.btn.btn-lg.btn-dark.btn-block(type="submit") Sign in
