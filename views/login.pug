@@ -1,0 +1,32 @@
+extends layout
+
+append styles
+	link(rel="stylesheet" href="/stylesheets/dashboard.css")
+	style.
+		html, body {
+			height: 100%;
+		}
+		body {
+			display: -ms-flexbox;
+			display: flex;
+			-ms-flex-align: center;
+			align-items: center;
+			padding-top: 40px;
+			padding-bottom: 40px;
+			background-color: #f5f5f5;
+			text-align: center;
+		}
+block content
+	form.form-signin(method='POST' autocomplete='off')
+		h1.h3.mb-4.font-weight-normal Blog
+		if errors
+			.alert.alert-dark.alert-dismissible.fade.show(role='alert')
+				each err in errors
+					div #[strong= err.param] #{err.msg}
+				button.close(type="button" data-dismiss="alert" aria-label="Close")
+					span.icon-close(aria-hidden="true")
+		input#email.form-control(type="email" name="email" placeholder="e-mail" value=email?email:'' required autofocus)
+		input#password.form-control(type="password" name="password" placeholder="password" required)
+		button.btn.btn-lg.btn-dark.btn-block(type="submit") Sign in
+
+		p.mt-4.mb-3.text-muted= sId
