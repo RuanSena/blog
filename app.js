@@ -5,10 +5,12 @@ var session = require('express-session')
 var mongoose = require('mongoose')
 var logger = require('morgan');
 var path = require('path');
+var Account = require('./models/account');
+
 var indexRouter = require('./routes/index');
 var adminRouter = require('./routes/login');
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true , useCreateIndex: true})
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
@@ -24,6 +26,20 @@ app.use(session({secret: process.env.SESSION_SECRET, resave: false, saveUninitia
 app.use(express.static(path.join(__dirname, 'node_modules/jquery/dist')));
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(function(req, res, next) {
+  if(req.session.accountID) {
+    Account.findById(req.session.accountID).exec((err, acc) => {
+      if (err) {
+        delete req.session.accountID;
+        next();
+      }
+      req.account = acc;
+      next()
+    })
+  } else {
+    next()
+  }
+})
 
 app.use('/', indexRouter);
 app.use('/admin', adminRouter);
