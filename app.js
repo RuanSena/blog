@@ -33,7 +33,7 @@ app.use(function(req, res, next) {
         delete req.session.accountID;
         next();
       }
-      req.account = acc;
+      res.locals.account = acc;
       next()
     })
   } else {

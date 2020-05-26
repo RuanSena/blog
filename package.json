@@ -17,10 +17,12 @@
     "express-validator": "^6.5.0",
     "http-errors": "~1.6.3",
     "jquery": "^3.5.1",
+    "md5": "^2.2.1",
     "mongoose": "^5.9.15",
     "morgan": "~1.9.1",
     "popper.js": "^1.16.1",
-    "pug": "^2.0.4"
+    "pug": "^2.0.4",
+    "slug": "^3.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

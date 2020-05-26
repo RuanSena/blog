@@ -38,7 +38,7 @@ router.post('/', [
 ])
 
 router.get('/dashboard', function(req, res, next) {
-  if(req.account) {
+  if(req.session.accountID) {
     res.render('dashboard', {title:'dashboard'})
   } else {
     return next()
