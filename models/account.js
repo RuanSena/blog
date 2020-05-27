@@ -10,9 +10,13 @@ const adminSchema = new Schema({
 })
 
 adminSchema
-.virtual('gravatar').get(function(size=0){
+.virtual('full_name').get(function(){
+    return this.surname ? `${this.name} ${this.surname}` : this.name
+})
+adminSchema
+.virtual('gravatar').get(function(){
     // default retro gravatar and 80px square
-    return `https://www.gravatar.com/avatar/${md5(this.email.toLowerCase())}?d=retro${size?'&s='+size:''}`
+    return `https://www.gravatar.com/avatar/${md5(this.email.toLowerCase())}?d=retro`
 })
 
 module.exports = mongoose.model('Account', adminSchema)
