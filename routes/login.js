@@ -4,7 +4,7 @@ var {body, validationResult} = require('express-validator')
 var Account = require('../models/account')
 
 router.get('/', function(req, res, next) {
-  if(req.account) {
+  if(req.session.accountID) {
     res.redirect('/admin/dashboard')
     return
   }

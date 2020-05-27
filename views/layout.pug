@@ -1,14 +1,31 @@
 doctype html
 html(lang='en')
-  head
-    meta(charset='utf-8')
-    meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
-    title= title
-    block styles
-      link(rel='stylesheet', href='/css/bootstrap.min.css')
-      link(rel='stylesheet', href='/stylesheets/style.css')
-  body.text-monospace
-    block content
-    block scripts
-      script(src='/jquery.slim.min.js')
-      script(src='/js/bootstrap.bundle.min.js')
+	head
+		meta(charset='utf-8')
+		meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+		title= title
+		block styles
+			link(rel='stylesheet' href='/css/bootstrap.min.css')
+			link(rel='stylesheet' href='/stylesheets/style.css')
+	body.text-monospace
+		header
+			block header
+				nav.navbar.navbar-dark.bg-dark
+					.container
+						a#logo.navbar-brand(href="/") ruansenadev
+
+						if account
+							.dropdown
+								button#dropdownAcc.btn.btn-dark.dropdown-toggle(type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+									img(src=account.gravatar+'&s=28').mr-1
+									span.d-none.d-md-inline= account.name
+								.dropdown-menu.text-center(aria-labelledby="dropdownAcc")
+									a.dropdown-item(href="") Alterar senha
+									a.dropdown-item(href="") Alterar email
+									.dropdown-divider
+									a.dropdown-item(href="/admin/dashboard") Painel
+		main
+			block content
+		block scripts
+			script(src='/jquery.slim.min.js')
+			script(src='/js/bootstrap.bundle.min.js')
