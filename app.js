@@ -9,6 +9,7 @@ var Account = require('./models/account');
 
 var indexRouter = require('./routes/index');
 var adminRouter = require('./routes/login');
+var articlesRouter = require('./routes/article');
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true , useCreateIndex: true})
 const db = mongoose.connection
@@ -43,6 +44,7 @@ app.use(function(req, res, next) {
 
 app.use('/', indexRouter);
 app.use('/admin', adminRouter);
+app.use('/post', articlesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

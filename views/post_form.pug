@@ -1,0 +1,70 @@
+extends layout
+
+block content
+	section.container.p-3
+		h3 Novo post
+		if errors
+			.alert.alert-dark.alert-dismissible.fade.show(role='alert')
+				each err in errors
+					div #[strong= err.param] #{err.msg}
+				button.close(type="button" data-dismiss="alert" aria-label="Close")
+					span.icon-forbid(aria-hidden="true")
+		form(action="" method="post" autocomplete="off")
+			.form-group.row
+				label.col-sm-2.col-form-label(for="title") título *
+				.col-sm-10
+					input#title.form-control(type="text" name="title", maxlength=80 required)
+
+			.form-group.row
+				label.col-sm-2.col-form-label(for="date") data
+				.col-sm-10
+					input#date.form-control-plaintext.bg-light.rounded.px-2(type="date" name="date", value=date, readonly, tabindex="-1")
+
+			.form-group.row
+				label.col-sm-2.col-form-label(for="category") categoria *
+				.col-sm-10
+					if categories.length
+						select#category.custom-select.mb-3(name="category")
+							option(value='') nova categoria
+							each c in categories
+								option(value=c._id data-color=c.color)= c.name
+					input#new_category.form-control.mb-3(type="text" name="new_category" maxlength=20)
+					input#category_color.form-control(type="color" value='#FFFFFF' name="category_color")
+
+			.form-group.row
+				label.col-sm-2.col-form-label(for="markup") conteúdo *
+					a.d-block(href="https://guides.github.com/pdfs/markdown-cheatsheet-online.pdf" target="_blank") markdown-it
+				.col-sm-10
+					textarea#markdown.form-control(name="markdown" rows="10" required)
+
+			.form-group.row
+				label.col-sm-2.col-form-label(for="description") descrição
+				.col-sm-10
+					textarea#description.form-control(type="text" name="description" rows="3" maxlength=300)
+			.form-group.row
+				label.col-sm-2.col-form-label(for="reference") referência
+				.col-sm-10
+					input#reference.form-control(type="url" name="reference")
+			.row.mt-4.mb-2
+				.col.text-right
+					button.btn.btn-outline-primary(type="submit") enviar
+						span.h3.icon-forward(aria-hidden="true")
+
+append scripts
+	script.
+		const categorySelector = $('#category')
+		const categoryInput = $('#new_category')
+		const categoryColor = $('#category_color')
+		$(function(){
+			categorySelector.change(function(e) {
+				let color = categorySelector.find(':selected').data('color')
+				if(!categorySelector.val()) {
+					categoryColor.attr('disabled', false)
+					categoryInput.show()
+				} else {
+					categoryInput.hide()
+					categoryColor.attr('value', color).attr('disabled', true)
+					categoryColor.val(color)
+				}
+			})
+		})

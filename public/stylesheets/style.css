@@ -15,7 +15,7 @@
   font-weight: normal;
   font-variant: normal;
   text-transform: none;
-  line-height: 1;
+  line-height: 1.45;
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -26,4 +26,12 @@ a {
 }
 #logo {
   color: var(--yellow);
+}
+body {
+  font-family: 'Courier New', Courier, monospace!important;
+  color: var(--light);
+  background-color: #1a1a1a;
+}
+h1, h2, h3 {
+  text-transform: uppercase;
 }
