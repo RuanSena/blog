@@ -2,7 +2,8 @@ extends layout
 
 block content
 	section.container.p-3
-		h3 Novo post
+		h3.icon-write.mb-0 Novo post
+		hr
 		if errors
 			.alert.alert-dark.alert-dismissible.fade.show(role='alert')
 				each err in errors
@@ -32,7 +33,7 @@ block content
 					input#category_color.form-control(type="color" value='#FFFFFF' name="category_color")
 
 			.form-group.row
-				label.col-sm-2.col-form-label(for="markup") conteúdo *
+				label.col-sm-2.col-form-label(for="markdown") conteúdo *
 					a.d-block(href="https://guides.github.com/pdfs/markdown-cheatsheet-online.pdf" target="_blank") markdown-it
 				.col-sm-10
 					textarea#markdown.form-control(name="markdown" rows="10" required)
@@ -59,11 +60,10 @@ append scripts
 			categorySelector.change(function(e) {
 				let color = categorySelector.find(':selected').data('color')
 				if(!categorySelector.val()) {
-					categoryColor.attr('disabled', false)
 					categoryInput.show()
 				} else {
 					categoryInput.hide()
-					categoryColor.attr('value', color).attr('disabled', true)
+					categoryColor.attr('value', color)
 					categoryColor.val(color)
 				}
 			})
