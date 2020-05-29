@@ -30,7 +30,6 @@ router.get('/post/adicionar', function (req, res, next) {
 
 router.post('/post/adicionar', [
   body('title', 'too long').isLength({ min: 1, max: 80 }),
-  body('date').isISO8601({ strict: true }),
   body('markdown').trim().notEmpty(),
   body('category').optional({ checkFalsy: true }).isMongoId(),
   body('new_category').if((val, { req }) => !req.body.category).trim().isLength({ min: 1, max: 20 }),
@@ -47,7 +46,6 @@ router.post('/post/adicionar', [
                   return res.render('admin/post_form', { title: 'Novo post', date, categories, errors: errors.array() })
               })
       } else {
-          req.body.date = moment(req.body.date)
           if (!req.body.category) {
               new Category({
                   name: req.body.new_category,
@@ -56,7 +54,7 @@ router.post('/post/adicionar', [
                   if (err) { return next(err) }
                   let article = new Article({
                       title: req.body.title,
-                      date: req.body.date,
+                      date: +moment(),
                       markdown: req.body.markdown,
                       category: cat._id,
                   })
@@ -70,7 +68,7 @@ router.post('/post/adicionar', [
           } else {
               let article = new Article({
                   title: req.body.title,
-                  date: req.body.date,
+                  date: +moment(),
                   markdown: req.body.markdown,
                   category: req.body.category
               })

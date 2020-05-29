@@ -2,11 +2,16 @@ var express = require('express')
 var router = express.Router()
 var Article = require('../models/article')
 var { param, validationResult } = require('express-validator')
-var moment = require('moment-timezone')
-moment.tz.setDefault('America/Bahia')
 
 router.get('/', function (req, res, next) {
-    res.render('home', { title: 'blog' });
+    Article.find()
+    .lean({virtuals: true})
+    .sort('-date')
+    .populate('category')
+    .exec((err, articles) => {
+        if(err) { return next(err) }
+        res.render('home', { title: 'blog', articles});
+    })
 });
 
 router.get('/:slug', [
@@ -17,10 +22,9 @@ router.get('/:slug', [
             return next()
         }
         Article.findOne({ slug: req.params.slug })
-            .lean()
+            .lean({virtuals: true})
             .exec((err, article) => {
                 if (err) { return next() }
-                article.date = moment(article.date).format('DD/MM/YYYY')
                 res.render('post', { title: article.title, article })
             })
     }

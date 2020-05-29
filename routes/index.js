@@ -9,7 +9,11 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/login', function(req, res, next) {
-  res.render('login', {title: 'log in'})
+  if(req.session.accountID) {
+    res.redirect('/admin')
+  } else {
+    res.render('login', {title: 'log in'})
+  }
 })
 router.post('/login', [
   body('email', 'invalid').isEmail(),
@@ -25,11 +29,12 @@ router.post('/login', [
           return next(err)
         }
         if(acc === null) {
-          return res.render('login', {title: 'log in', errors: [{param: 'email', msg: 'not registered'}]})
+          res.render('login', {title: 'log in', errors: [{param: 'email', msg: 'not registered'}]})
+          return;
         }
         if(acc.password === req.body.password) {
           req.session.accountID = acc._id;
-          return res.redirect('/admin')
+          res.redirect('/admin')
         } else {
           res.render('login', {title: 'log in', email: req.body.email, errors: [{param: 'password', msg: 'incorrect'}]})
         }

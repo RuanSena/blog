@@ -17,11 +17,6 @@ block content
 					input#title.form-control(type="text" name="title", maxlength=80 required)
 
 			.form-group.row
-				label.col-sm-2.col-form-label(for="date") data
-				.col-sm-10
-					input#date.form-control-plaintext.bg-light.rounded.px-2(type="date" name="date", value=date, readonly, tabindex="-1")
-
-			.form-group.row
 				label.col-sm-2.col-form-label(for="category") categoria *
 				.col-sm-10
 					if categories.length

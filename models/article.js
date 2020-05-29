@@ -1,8 +1,12 @@
 var mongoose = require('mongoose')
+var lean_virtuals = require('mongoose-lean-virtuals')
 var {JSDOM} = require('jsdom')
 var purify = require('dompurify')
 var marked = require('marked')
 var slugify = require('slug')
+var moment = require('moment-timezone')
+moment.tz.setDefault('America/Bahia')
+moment.locale('pt-br')
 var Schema = mongoose.Schema
 
 const articleSchema = new Schema({
@@ -22,5 +26,13 @@ articleSchema.pre('validate', function(next) {
     this.content = dom.sanitize(marked(this.markdown))
     next()
 })
+
+articleSchema.virtual('datetime')
+.get(function(){
+    let value = moment(this.date)
+    return { value, fromNow: value.fromNow() }
+})
+
+articleSchema.plugin(lean_virtuals)
 
 module.exports = mongoose.model('Article', articleSchema)
