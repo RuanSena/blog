@@ -8,6 +8,8 @@ block content
 	.container
 		.row.no-gutters.row-cols-1.row-cols-md-2
 			section(role="feed").feed.col-12.col-md-9
+				header.feed-header
+					h2.h4.mb-0 Últimos posts
 				each a in articles
 					+card(a)
 

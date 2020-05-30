@@ -29,56 +29,82 @@ a {
 }
 #logo {
   color: var(--yellow);
+  font-weight: 650;
 }
 body {
   font-family: 'Courier New', Courier, monospace!important;
-  color: var(--light);
-  /* background-color: #1a1a1a; */
-  background-color: #555;
+  /* color: var(--light); */
+  background-color: var(--light);
 }
-h1, h2 {
-  text-transform: uppercase;
+.feed {
+}
+.feed-header {
+  padding: 1rem 2rem;
+  margin-bottom: .5rem;
 }
 .notecard {
-  display: flex;
   margin-bottom: 1rem;
-  filter: sepia(.2);
+  background-color: white;
 }
 .notecard-wrapper {
-  border: 6px groove;
-  margin-left: -3px;
-  border-left: 0;
   flex: 1;
   background-color: var(--light);
   color: var(--dark);
 }
-.notecard-label {
-  border: 6px groove;
-  writing-mode: vertical-lr;
-  text-orientation: upright;
-  padding: .5rem 3px;
-  text-align: center;
-  text-shadow: -1px 1px rgba(0, 0, 0, .5);
-  text-transform: uppercase;
-  font-weight: bold;
-  user-select: none;
+.notecard-header, .notecard-body, .notecard-footer {
+  display: flex;
 }
-.notecard-header, .notecard-footer {
+.label {
+  width: 10%;
+  max-width: 3rem;
+  padding: 1rem 0;
+}
+.label-cat {
+  filter: sepia(.2) saturate(1.3);
+}
+.header-inner, .body-inner, .footer-inner {
+  flex: 1;
+}
+.header-inner, .footer-inner {
   display: inline-flex;
-  width: 100%;
-  padding: .5rem 1rem;
+  padding: .8rem 1.8rem;
   align-items: center;
 }
-.notecard-header {
-  background: linear-gradient(135deg, rgba(233,233,206,1) 0%, rgba(252,255,244,1) 100%);
+.header-inner {
+  color: var(--light);
+  background-color: var(--dark);
 }
-.notecard-body {
+.body-inner {
+  position: relative;
+  border-right: 1px solid #e6e8eb;
   padding: 1rem;
+  white-space: pre;
+  counter-reset: line;
+}
+.text-line::before {
+  position: absolute;
+  left: -2.2rem;
+  counter-increment: line;
+  content: counter(line);
+  user-select: none;
+  font-size: .8rem;
+  color: #6c757d;
+  text-align: right;
+  display: inline-block;
+  width: 18px;
+}
+.label-line {
+  background: #f7f9fa;
+  border-right: 1px solid #e6e8eb;
+  border-left: 1px solid #e6e8eb;
 }
 .notecard-footer {
+  border: 1px solid #e6e8eb;
+}
+.footer-inner {
   justify-content: space-between;
 }
 .notecard-title {
   margin: 0 auto;
-  font-size: 1.4rem;
+  font-size: 1.25rem;
 }

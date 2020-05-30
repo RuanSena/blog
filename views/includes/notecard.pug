@@ -1,13 +1,16 @@
 mixin card(a)
 	- let date = a.datetime
 	.notecard
-		.notecard-label(style=`background-color: ${a.category.color}`)= a.category.name
-		.notecard-wrapper
-			.notecard-header(style=`border-color: ${a.category.color}`)
+		.notecard-header
+			.label.label-cat(style=`background-color: ${a.category.color}`)
+			.header-inner
 				h3.notecard-title= a.title
 
-			.notecard-body
-				| !{a.content}
-			.notecard-footer
+		.notecard-body
+			.label.label-line
+			.body-inner !{a.content}
+		.notecard-footer
+			.label
+			.footer-inner
 				time(datetime=date.value)= date.fromNow
 				a.btn.btn-outline-dark(role="button" href=`/blog/${a.slug}`) Ler
