@@ -18,10 +18,21 @@ router.get('/', function (req, res, next) {
                 .sort('-date')
                 .populate('category')
                 .exec(cb)
+        },
+        archives: function (cb) {
+            Article.aggregate([
+                {
+                    $group: {
+                        _id: { month: {$month: '$date'}, year: {$year: '$date'} },
+                        count: {$sum: 1}
+                    }
+                }
+            ]).exec(cb)
         }
     }, (err, results) => {
         if (err) { return next(err) }
-        res.render('home', { title: 'blog', articles: results.articles, author: results.owner})
+        console.log(results.archives)
+        res.render('home', { title: 'blog', articles: results.articles, author: results.owner, archives: results.archives})
     })
 });
 

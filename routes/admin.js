@@ -16,6 +16,7 @@ router.use(function(req, res, next) {
 })
 
 router.get('/', function(req, res) {
+  console.log(moment().format('L'))
   res.render('admin/dashboard', {title:'dashboard'})
 });
 

@@ -22,4 +22,11 @@ block content
 						a.list-group-item.list-group-item-action.icon-forward(href='https://www.freelancer.com/u/ruansenadev' target="_blank") Freelancer
 						a.list-group-item.list-group-item-action.icon-develop(href='https://github.com/RuanSena' target="_blank") GitHub
 
-				
+				.card.archives
+					.card-header.icon-schedule Arquivos
+					ul.list-group.list-group-flush
+						- let months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+						each m in archives
+							li.list-group-item= `${months[m._id.month-1]}/${m._id.year}`
+								span.p-1.ml-2.badge.badge-dark= m.count
+

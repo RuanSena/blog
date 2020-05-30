@@ -118,6 +118,9 @@ body {
   padding: .5rem .7rem;
 }
 
+aside .card {
+  margin-bottom: 2rem;
+}
 .contact {
   text-align: center;
   margin-top: 4rem;
