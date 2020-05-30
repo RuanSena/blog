@@ -13,5 +13,5 @@ mixin card(a)
 		.notecard-footer
 			.label.label-cat(style=`background-color: ${a.category.color}`)
 			.footer-inner
-				time(datetime=date.value)= date.fromNow
+				time.note-date.icon-time(datetime=date.value)= date.fromNow
 				a.btn.btn-outline-dark(role="button" href=`/blog/${a.slug}`) Ler

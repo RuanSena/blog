@@ -2,11 +2,8 @@ extends layout
 include includes/notecard.pug
 
 block content
-	if account
-		.row
-			a.btn.btn-outline-success(role='button' href='') Novo artigo
 	.container
-		.row.no-gutters.row-cols-1.row-cols-md-2
+		.row.row-cols-1.row-cols-md-2
 			section(role="feed").feed.col-12.col-md-9
 				header.feed-header
 					h2.h4.mb-0 Últimos posts
@@ -14,4 +11,15 @@ block content
 					+card(a)
 
 
-			aside.d-none.d-md-block.col-3
+			aside.d-none.d-md-block.col-md-3
+				.contact.card
+					img.card-img-top.owner-img(src=author.gravatar)
+					.card-body
+						h5.card-title= author.full_name
+						p.card-text desenvolvedor FullStack
+					.list-group.list-group-flush
+						a.list-group-item.list-group-item-action.icon-call(href='https://wa.me/5575999433169?text=Ol%C3%A1%2C%20eu%20quero%20contratar%20um%20servi%C3%A7o%20seu%20de%20desenvolvimento' target="_blank") WhatsApp
+						a.list-group-item.list-group-item-action.icon-forward(href='https://www.freelancer.com/u/ruansenadev' target="_blank") Freelancer
+						a.list-group-item.list-group-item-action.icon-develop(href='https://github.com/RuanSena' target="_blank") GitHub
+
+				

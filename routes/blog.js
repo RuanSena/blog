@@ -1,16 +1,27 @@
 var express = require('express')
 var router = express.Router()
+var async = require('async')
 var Article = require('../models/article')
+var Account = require('../models/account')
 var { param, validationResult } = require('express-validator')
 
 router.get('/', function (req, res, next) {
-    Article.find()
-    .lean({virtuals: true})
-    .sort('-date')
-    .populate('category')
-    .exec((err, articles) => {
-        if(err) { return next(err) }
-        res.render('home', { title: 'blog', articles});
+    async.parallel({
+        owner: function (cb) {
+            Account.findOne({ email: process.env.OWNER_EMAIL })
+                .lean({virtuals: true})
+                .exec(cb)
+        },
+        articles: function (cb) {
+            Article.find()
+                .lean({ virtuals: true })
+                .sort('-date')
+                .populate('category')
+                .exec(cb)
+        }
+    }, (err, results) => {
+        if (err) { return next(err) }
+        res.render('home', { title: 'blog', articles: results.articles, author: results.owner})
     })
 });
 
@@ -22,7 +33,7 @@ router.get('/:slug', [
             return next()
         }
         Article.findOne({ slug: req.params.slug })
-            .lean({virtuals: true})
+            .lean({ virtuals: true })
             .exec((err, article) => {
                 if (err) { return next() }
                 res.render('post', { title: article.title, article })
