@@ -5,12 +5,13 @@ mixin card(a)
 			.label.label-cat(style=`background-color: ${a.category.color}`)
 			.header-inner
 				h3.notecard-title= a.title
+					a.stretched-link(href=`/blog/${a.slug}`)
 
 		.notecard-body
 			.label.label-line
 			.body-inner !{a.content}
 		.notecard-footer
-			.label
+			.label.label-cat(style=`background-color: ${a.category.color}`)
 			.footer-inner
 				time(datetime=date.value)= date.fromNow
 				a.btn.btn-outline-dark(role="button" href=`/blog/${a.slug}`) Ler

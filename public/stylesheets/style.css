@@ -83,11 +83,11 @@ body {
 }
 .text-line::before {
   position: absolute;
-  left: -2.2rem;
+  left: -2rem;
   counter-increment: line;
   content: counter(line);
   user-select: none;
-  font-size: .8rem;
+  font-size: .9rem;
   color: #6c757d;
   text-align: right;
   display: inline-block;
@@ -105,6 +105,10 @@ body {
   justify-content: space-between;
 }
 .notecard-title {
-  margin: 0 auto;
+  position: relative;
+  width: 100%;
+  text-align: center;
   font-size: 1.25rem;
+  margin: 0;
+  text-decoration: none;
 }
