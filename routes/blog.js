@@ -35,7 +35,13 @@ router.get('/', function (req, res, next) {
         }
     }, (err, results) => {
         if (err) { return next(err) }
-        res.render('home', { title: 'blog', articles: results.articles, author: results.owner, archives: results.archives})
+        let months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+        let archives = results.archives.reduce((dates, group) => {
+            if(!dates[group._id.year]) dates[group._id.year] = [];
+            dates[group._id.year].unshift({month: months[group._id.month-1], items: group.count})
+            return dates
+        }, {})
+        res.render('home', { title: 'blog', articles: results.articles, author: results.owner, archives, actual: new Date().getUTCFullYear()})
     })
 });
 
@@ -56,14 +62,36 @@ router.get('/c', function(req, res, next) {
             })
         }, (err, results) => {
             if(err) {return next(err)}
+            results.sort((a, b) => {
+                if(a.last && b.last) {return a.last.date > b.last.date ? -1 : 1}
+                if(!a.last) {return 1}
+                if(!b.last) {return -1}
+            })
             res.render('categories', {title: 'Categorias', categories: results})
         })
     })
 })
 // category article feed
-router.get('/c/:slug', function(req, res, next) {
-
-})
+router.get('/c/:slug', [
+    param('slug').isSlug(),
+    function (req, res, next) {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return next(err)
+        }
+        Category.findOne({slug: req.params.slug})
+        .lean()
+        .exec((err, cat) => {
+            if(err || !cat) {return next()}
+            Article.find({category: cat._id})
+            .lean({virtuals: true})
+            .exec((err, articles) => {
+                if(err) {return next(err)}
+                res.render('category', {title: cat.name, category: cat, articles})
+            })
+        })
+    }
+])
 // article read route
 router.get('/:slug', [
     param('slug').isSlug(),
