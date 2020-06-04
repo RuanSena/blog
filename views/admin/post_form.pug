@@ -21,10 +21,11 @@ block content
 				.col-sm-10
 					if categories.length
 						select#category.custom-select.mb-3(name="category")
-							option(value='') nova categoria
+							option(value='') Nova categoria
 							each c in categories
 								option(value=c._id data-color=c.color)= c.name
-					input#new_category.form-control.mb-3(type="text" name="new_category" maxlength=20)
+					input#new_category.form-control.mb-3(type="text" name="new_category" maxlength=20 placeholder="Nome")
+					textarea#category_description.form-control.mb-3(name="category_description", placeholder="Descrição", rows="3", maxlength=200)
 					input#category_color.form-control(type="color" value='#FFFFFF' name="category_color")
 
 			.form-group.row
@@ -36,7 +37,7 @@ block content
 			.form-group.row
 				label.col-sm-2.col-form-label(for="description") descrição
 				.col-sm-10
-					textarea#description.form-control(type="text" name="description" rows="3" maxlength=300)
+					textarea#description.form-control(type="text" name="description" rows="4" maxlength=300)
 			.form-group.row
 				label.col-sm-2.col-form-label(for="reference") referência
 				.col-sm-10
@@ -44,19 +45,22 @@ block content
 			.row.mt-4.mb-2
 				.col.text-right
 					button.btn.btn-outline-primary(type="submit") enviar
-						span.h3.icon-forward(aria-hidden="true")
+						span.h3.icon-go(aria-hidden="true")
 
 append scripts
 	script.
 		const categorySelector = $('#category')
 		const categoryInput = $('#new_category')
+		const categoryDesc = $('#category_description')
 		const categoryColor = $('#category_color')
 		$(function(){
 			categorySelector.change(function(e) {
 				let color = categorySelector.find(':selected').data('color')
 				if(!categorySelector.val()) {
 					categoryInput.show()
+					categoryDesc.show()
 				} else {
+					categoryDesc.hide()
 					categoryInput.hide()
 					categoryColor.attr('value', color)
 					categoryColor.val(color)

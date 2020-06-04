@@ -3,10 +3,12 @@ var router = express.Router()
 var async = require('async')
 var Article = require('../models/article')
 var Account = require('../models/account')
+var Category = require('../models/category')
 var { param, validationResult } = require('express-validator')
 var moment = require('moment-timezone')
 moment.tz.setDefault('America/Bahia')
 
+// article feed
 router.get('/', function (req, res, next) {
     async.parallel({
         owner: function (cb) {
@@ -37,6 +39,32 @@ router.get('/', function (req, res, next) {
     })
 });
 
+// category list
+router.get('/c', function(req, res, next) {
+    Category.find()
+    .lean()
+    .exec(function(err, categories) {
+        if(err) {return next()}
+        async.map(categories, function(cat, cb) {
+            Article.findOne({category: cat._id})
+            .sort('-date')
+            .lean({virtuals: true})
+            .exec((err, last) => {
+                if(err) {return cb(err)}
+                cat.last = last;
+                cb(null, cat)
+            })
+        }, (err, results) => {
+            if(err) {return next(err)}
+            res.render('categories', {title: 'Categorias', categories: results})
+        })
+    })
+})
+// category article feed
+router.get('/c/:slug', function(req, res, next) {
+
+})
+// article read route
 router.get('/:slug', [
     param('slug').isSlug(),
     function (req, res, next) {
@@ -46,7 +74,7 @@ router.get('/:slug', [
         }
         Article.findOne({ slug: req.params.slug })
             .exec((err, article) => {
-                if (err) { return next() }
+                if (err || !article) { return next() }
                 let ip = req.ip || req.connection.remoteAddress
                 for(let view of article.views) {
                     if(view.ip === ip) {

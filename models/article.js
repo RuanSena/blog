@@ -37,7 +37,7 @@ articleSchema.pre('validate', function(next) {
 articleSchema.virtual('datetime')
 .get(function(){
     let value = moment(this.date)
-    return { value, fromNow: value.fromNow() }
+    return { value, fromNow: value.fromNow(), formated: value.format('L') }
 })
 
 articleSchema.plugin(lean_virtuals)

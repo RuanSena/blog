@@ -16,7 +16,6 @@ router.use(function(req, res, next) {
 })
 
 router.get('/', function(req, res) {
-  console.log(moment().format('L'))
   res.render('admin/dashboard', {title:'dashboard'})
 });
 
@@ -34,8 +33,9 @@ router.post('/post/adicionar', [
   body('markdown').trim().notEmpty(),
   body('category').optional({ checkFalsy: true }).isMongoId(),
   body('new_category').if((val, { req }) => !req.body.category).trim().isLength({ min: 1, max: 20 }),
+  body('category_description').if((val, { req }) => !req.body.category).trim().escape().isLength({ min: 1, max: 200 }),
   body('category_color').isHexColor(),
-  body('description').optional({ checkFalsy: true }).trim().isLength({ min: 1, max: 300 }),
+  body('description').optional({ checkFalsy: true }).trim().escape().isLength({ min: 1, max: 300 }),
   body('reference').optional({ checkFalsy: true }).isURL(),
   function (req, res, next) {
       const errors = validationResult(req)
@@ -50,6 +50,7 @@ router.post('/post/adicionar', [
           if (!req.body.category) {
               new Category({
                   name: req.body.new_category,
+                  description: req.body.category_description,
                   color: req.body.category_color
               }).save(function (err, cat) {
                   if (err) { return next(err) }
