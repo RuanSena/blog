@@ -4,5 +4,5 @@ block content
     article.post
         header
             h3= article.title
-            small.icon-time= article.date
+            small.icon-time= article.datetime.formated
         section !{article.content}

@@ -3,7 +3,7 @@ extends layout
 block content
 	.container
 		section.items-list.row.row-cols-1.p-4
-			h3 Categorias
+			h3.mb-4 Categorias
 			.list-group
 				each c in categories
 					a.list-group-item.list-group-item-action(href=`/blog/c/${c.slug}` style="max-width: 45rem;")
