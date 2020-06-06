@@ -19,7 +19,7 @@ router.get('/', function(req, res) {
   res.render('admin/dashboard', {title:'dashboard'})
 });
 
-router.get('/post/adicionar', function (req, res, next) {
+router.get('/p/adicionar', function (req, res, next) {
   Category.find()
       .lean()
       .exec((err, categories) => {
@@ -27,8 +27,7 @@ router.get('/post/adicionar', function (req, res, next) {
           res.render('admin/post_form', { title: 'Novo post', date, categories })
       })
 })
-
-router.post('/post/adicionar', [
+router.post('/p/adicionar', [
   body('title', 'too long').isLength({ min: 1, max: 80 }),
   body('markdown').trim().notEmpty(),
   body('category').optional({ checkFalsy: true }).isMongoId(),
@@ -84,5 +83,7 @@ router.post('/post/adicionar', [
       }
   }
 ])
+
+router.get('/')
 
 module.exports = router;

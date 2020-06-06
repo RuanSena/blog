@@ -29,7 +29,8 @@ block content
 				.card
 					.card-header.icon-schedule Arquivos
 					#archives.accordion
-						each y, year in archives
+						- console.log(archives)
+						each months, year in archives
 							if year == actual
 								.card.mb-0
 									.card-header(id=`heading${year}`)
@@ -37,16 +38,16 @@ block content
 											button.btn.btn-block.text-left(type="button" data-toggle="collapse" data-target=`#collapse${year}` aria-expanded="true" aria-controls=`collapse${year}`)= year
 									.collapse.show(id=`collapse${year}` aria-labelledby=`heading${year}` data-parent="#archives")
 										.list-group.list-group-flush
-											each m in y
-												a.list-group-item.list-group-item-action(href=`/blog?`)= m.month
+											each m in months
+												a.list-group-item.list-group-item-action(href=`/blog/a?m=${m.month}`)= m.name
 													span.px-2.ml-2.badge.badge-dark= m.items
-							else	
+							else
 								.card.mb-0
 									.card-header(id=`heading${year}`)
 										h2.mb-0
 											button.btn.btn-block.text-left(type="button" data-toggle="collapse" data-target=`#collapse${year}` aria-expanded="false" aria-controls=`collapse${year}`)= year
 									.collapse(id=`collapse${year}` aria-labelledby=`heading${year}` data-parent="#archives")
 										.list-group.list-group-flush
-											each m in y
-												a.list-group-item.list-group-item-action(href=`/blog?`)= m.month
+											each m in months
+												a.list-group-item.list-group-item-action(href=`/blog/a?m=${m.month}&y=${year}`)= m.name
 													span.px-2.ml-2.badge.badge-dark= m.items

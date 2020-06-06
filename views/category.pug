@@ -3,7 +3,7 @@ extends layout
 block content
     .container
         section.items-list.row.row-cols-1.p-4
-            h2.mb-3= category.name
+            h3.mb-3= category.name
             ul.list-group
                 each a in articles
                     li.list-group-item.list-group-item-action(style=`border-left: 5px solid ${category.color}; max-width: 55rem;`)
