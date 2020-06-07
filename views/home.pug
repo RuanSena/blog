@@ -2,13 +2,18 @@ extends layout
 include includes/notecard.pug
 
 block content
-	.container
+	.container-lg
 		.row.row-cols-1.row-cols-md-2
 			section(role="feed").feed.col-12.col-md-9
 				header.feed-header
-					h2.h4.mb-0 Últimos posts
+					h2.h4.mb-0 Página
+						small.pl-3.text-muted= page
 				each a in articles
 					+card(a)
+				footer.feed-footer
+					nav
+						a.btn(role="button" class=page==1?'btn-outline-dark disabled':'btn-outline-primary', href=page==1?'/blog':`/blog${page-2?'?left='+(page-2):''}`, tabindex=page==1?'-1':'', aria-disabled=page==1?'true':'false') Mais recente
+						a.btn(role="button" class=more?'btn-outline-primary':'btn-outline-dark disabled', href=more?`/blog?left=${page}`:`/blog?left=${page-1}`, tabindex=more?'':'-1', aria-disabled=more?'false':'true') Mais antigo
 
 
 			aside.d-none.d-md-block.col-md-3
@@ -29,7 +34,6 @@ block content
 				.card
 					.card-header.icon-schedule Arquivos
 					#archives.accordion
-						- console.log(archives)
 						each months, year in archives
 							if year == actual
 								.card.mb-0

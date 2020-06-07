@@ -79,7 +79,6 @@ body {
   position: relative;
   border-right: 1px solid #e6e8eb;
   padding: 1rem;
-  white-space: pre;
   counter-reset: line;
 }
 .text-line::before {

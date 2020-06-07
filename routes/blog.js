@@ -11,40 +11,58 @@ const now = moment()
 const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
 // article feed
-router.get('/', function (req, res, next) {
-    async.parallel({
-        owner: function (cb) {
-            Account.findOne({ email: process.env.OWNER_EMAIL })
-                .lean({ virtuals: true })
-                .exec(cb)
-        },
-        articles: function (cb) {
-            Article.find()
-                .lean({ virtuals: true })
-                .sort('-date')
-                .populate('category')
-                .exec(cb)
-        },
-        archives: function (cb) {
-            Article.aggregate([
-                {
-                    $group: {
-                        _id: { month: { $month: '$date' }, year: { $year: '$date' } },
-                        count: { $sum: 1 }
-                    }
-                }
-            ]).exec(cb)
+router.get('/', [
+    query('items').optional({ checkFalsy: true }).matches(/[6-8]/).toInt(),
+    query('left').optional({ checkFalsy: true }).isNumeric().toInt(),
+    function (req, res, next) {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return next()
         }
-    }, (err, results) => {
-        if (err) { return next(err) }
-        let archives = results.archives.reduce((dates, group) => {
-            if (!dates[group._id.year]) dates[group._id.year] = [];
-            dates[group._id.year].unshift({ month: group._id.month, name: months[group._id.month - 1], items: group.count })
-            return dates
-        }, {})
-        res.render('home', { title: 'blog', articles: results.articles, author: results.owner, archives, actual: now.year() })
-    })
-});
+        req.query.items = req.query.items || 6
+        async.parallel({
+            owner: function (cb) {
+                Account.findOne({ email: process.env.OWNER_EMAIL })
+                    .lean({ virtuals: true })
+                    .exec(cb)
+            },
+            articles: function (cb) {
+                Article.find()
+                    .lean({ virtuals: true })
+                    .sort('-date')
+                    .skip(req.query.items * req.query.left)
+                    .limit(req.query.items+1)
+                    .populate('category')
+                    .exec((err, articles) => {
+                        if(err) { return cb(err) }
+                        articles = articles[req.query.items] ? [articles.slice(0, req.query.items), true] : [articles, false]
+                        cb(null, articles)
+                    })
+            },
+            archives: function (cb) {
+                Article.aggregate([
+                    {
+                        $group: {
+                            _id: { month: { $month: '$date' }, year: { $year: '$date' } },
+                            count: { $sum: 1 }
+                        }
+                    }
+                ]).exec((err, archives) => {
+                    if (err) { return cb(err) }
+                    archives = archives.reduce((dates, group) => {
+                        if (!dates[group._id.year]) dates[group._id.year] = [];
+                        dates[group._id.year].unshift({ month: group._id.month, name: months[group._id.month - 1], items: group.count})
+                        return dates
+                    }, {})
+                    cb(null, archives)
+                })
+            }
+        }, (err, results) => {
+            if (err) { return next(err) }
+            res.render('home', { title: 'blog', articles: results.articles[0], author: results.owner, archives: results.archives, actual: now.year(), page: req.query.left ? req.query.left+1 : 1, more: results.articles[1] })
+        })
+    }
+]);
 
 // category list
 router.get('/c', function (req, res, next) {
@@ -104,17 +122,19 @@ router.get('/a', [
         }
         req.query.y = req.query.y || now.year()
         req.query.m = req.query.m || now.month() + 1;
-        Article.find({$and: [
-            { $expr: {$eq: [{$month: "$date"}, req.query.m]} },
-            { $expr: {$eq: [{$year: "$date"}, req.query.y]} }
-          ]})
+        Article.find({
+            $and: [
+                { $expr: { $eq: [{ $month: "$date" }, req.query.m] } },
+                { $expr: { $eq: [{ $year: "$date" }, req.query.y] } }
+            ]
+        })
             .lean({ virtuals: true })
             .populate('category')
             .exec((err, month) => {
                 if (err) { return next(err) }
-                let {m, y} = req.query
-                let ref = `${months[req.query.m-1]}/${req.query.y}`
-                res.render('archives', {title: `${months[req.query.m-1]} - ${req.query.y}`, month, ref, y})
+                let { m, y } = req.query
+                let ref = `${months[m - 1]}/${req.query.y}`
+                res.render('archives', { title: `${months[req.query.m - 1]} - ${req.query.y}`, month, ref, y })
             })
     }
 ])
