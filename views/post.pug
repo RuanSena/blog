@@ -1,8 +1,10 @@
 extends layout
+include includes/notepad.pug
 
 block content
-    article.post
-        header
-            h3= article.title
-            small.icon-time= article.datetime.formated
-        section !{article.content}
+    +post(article)
+    //- article.post
+    //-     header
+    //-         h3= article.title
+    //-         small.icon-time= article.datetime.formated
+    //-     section !{article.content}

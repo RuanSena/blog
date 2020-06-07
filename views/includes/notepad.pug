@@ -1,0 +1,16 @@
+mixin post(a)
+	- let date = a.datetime
+	article.notepad
+		header.notepad-header
+			.label.label-cat(style=`background-color: ${a.category.color}`)
+			.header-inner
+				h3.notepad-title= a.title
+				time.note-date.icon-time(datetime=date.value)= date.fromNow
+		section.notepad-body
+			.label.label-line
+			.body-inner !{a.content}
+		if a.reference
+			footer.notepad-footer
+				.label.label-cat(style=`background-color: ${a.category.color}`)
+				.footer-inner.icon-link
+					a.text-body(href=a.reference target="_blank")= a.reference

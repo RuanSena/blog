@@ -59,7 +59,7 @@ router.get('/', [
             }
         }, (err, results) => {
             if (err) { return next(err) }
-            res.render('home', { title: 'blog', articles: results.articles[0], author: results.owner, archives: results.archives, actual: now.year(), page: req.query.left ? req.query.left+1 : 1, more: results.articles[1] })
+            res.render('home', { title: 'blog', articles: results.articles[0], author: results.owner, archives: results.archives, actual: now.year(), left: req.query.left || 0, more: results.articles[1] })
         })
     }
 ]);
@@ -147,6 +147,7 @@ router.get('/:slug', [
             return next()
         }
         Article.findOne({ slug: req.params.slug })
+            .populate('category')
             .exec((err, article) => {
                 if (err || !article) { return next() }
                 let ip = req.ip || req.connection.remoteAddress
@@ -169,6 +170,7 @@ router.get('/:slug', [
                 }
                 article.markModified('views')
                 article.save(function (err, article) {
+                    if(err){return next(err)}
                     res.render('post', { title: article.title, article })
                 })
             })

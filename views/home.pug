@@ -7,16 +7,16 @@ block content
 			section(role="feed").feed.col-12.col-md-9
 				header.feed-header
 					h2.h4.mb-0 Página
-						small.pl-3.text-muted= page
+						small.pl-3.text-muted= left+1
 				each a in articles
 					+card(a)
 				footer.feed-footer
-					nav
-						a.btn(role="button" class=page==1?'btn-outline-dark disabled':'btn-outline-primary', href=page==1?'/blog':`/blog${page-2?'?left='+(page-2):''}`, tabindex=page==1?'-1':'', aria-disabled=page==1?'true':'false') Mais recente
-						a.btn(role="button" class=more?'btn-outline-primary':'btn-outline-dark disabled', href=more?`/blog?left=${page}`:`/blog?left=${page-1}`, tabindex=more?'':'-1', aria-disabled=more?'false':'true') Mais antigo
+					nav.nav.nav-justified
+						a.btn.nav-item.mx-4.my-2.text-nowrap(role="button" class=left?'btn-outline-primary':'btn-outline-dark disabled', href=left?`/blog${left-1?'?left='+(left-1):''}`:'/blog', tabindex=left?'':'-1', aria-disabled=left?'false':'true') Mais recente
+						a.btn.nav-item.mx-4.my-2.text-nowrap(role="button" class=more?'btn-outline-primary':'btn-outline-dark disabled', href=more?`/blog?left=${left+1}`:`/blog?left=${left}`, tabindex=more?'':'-1', aria-disabled=more?'false':'true') Mais antigo
 
 
-			aside.d-none.d-md-block.col-md-3
+			aside.col-md-3
 				.contact.card
 					img.card-img-top.owner-img(src=author.gravatar)
 					.card-body
