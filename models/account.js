@@ -11,7 +11,7 @@ const adminSchema = new Schema({
 })
 
 adminSchema
-.virtual('full_name').get(function(){
+.virtual('fullname').get(function(){
     return this.surname ? `${this.name} ${this.surname}` : this.name
 })
 adminSchema

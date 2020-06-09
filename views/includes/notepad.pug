@@ -1,11 +1,10 @@
 mixin post(a)
-	- let date = a.datetime
 	article.notepad
 		header.notepad-header
 			.label.label-cat(style=`background-color: ${a.category.color}`)
 			.header-inner
 				h3.notepad-title= a.title
-				time.note-date.icon-time(datetime=date.value)= date.formated
+				time.note-date.icon-time(datetime=a.date)= a.date.toLocaleDateString()
 		section.notepad-body
 			.label.label-line
 			.body-inner !{a.content}
@@ -16,4 +15,4 @@ mixin post(a)
 					if a.reference
 						a.text-body.icon-link(href=a.reference target="_blank")= a.reference
 					if a.edits.length
-						small.text-muted.icon-write Última edição #{a.lastedit.fromNow}
+						small.text-muted.icon-write Última edição #{a.etime}

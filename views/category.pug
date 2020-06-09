@@ -9,7 +9,7 @@ block content
                     li.list-group-item.list-group-item-action(style=`border-left: 5px solid ${category.color}; max-width: 55rem;`)
                         .d-flex.justify-content-between.align-items-baseline
                             h6.font-weight-bold= a.title
-                            time(datetime=a.datetime.value)= a.datetime.formated
+                            time(datetime=a.date)= a.date.toLocaleDateString()
                         if a.description
                             p.pl-3.m-0= a.description
                         a.stretched-link(href=`/blog/${a.slug}`)

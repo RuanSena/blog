@@ -21,7 +21,7 @@ const editSchema = new Schema({
 
 const articleSchema = new Schema({
     title: {type: String, maxlength: 80, required: true},
-    publish: {type: Date, default: Date.now},
+    date: {type: Date, default: Date.now},
     author: {type: Schema.Types.ObjectId, ref: 'Account', required: true},
     markdown: {type: String, required: true},
     description: {type: String, maxlength: 300},
@@ -40,15 +40,24 @@ articleSchema.pre('validate', function(next) {
     next()
 })
 
-articleSchema.virtual('lastedit')
+articleSchema.virtual('ptime')
 .get(function(){
-    let value = moment(this.edits[this.edits.length-1])
-    return {value, fromNow: value.fromNow(), formated: value.format('L')}
+    return moment(this.date).fromNow()
 })
-articleSchema.virtual('datetime')
+articleSchema.virtual('etime')
 .get(function(){
-    let value = moment(this.publish)
-    return { value, fromNow: value.fromNow(), formated: value.format('L') }
+    if (this.edits.length) {
+        return moment(this.edits[this.edits.length-1]).fromNow()
+    }
+    return false
+})
+articleSchema.virtual('viewscount')
+.get(function(){
+    let count = 0;
+    this.views.forEach((v) => {
+        count += v.dates.length
+    })
+    return count
 })
 
 articleSchema.plugin(lean_virtuals)

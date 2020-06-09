@@ -10,6 +10,6 @@ block content
 						.d-flex.w-100.justify-content-between.align-items-center
 							h5.mb-1= c.name
 							if c.last
-								span.badge.badge-pill.badge-light= c.last.datetime.fromNow
+								span.badge.badge-pill.badge-light= c.last.ptime
 						p.mb-1= c.description
 						.category-color(style=`background-color: ${c.color}`)
