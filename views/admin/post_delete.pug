@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+	section.container.p-3
+		h3.icon-explode.mb-0 Deletar post
+		hr
+		if errors
+			.alert.alert-dark.alert-dismissible.fade.show(role='alert')
+				each err in errors
+					div #[strong= err.param] #{err.msg}
+				button.close(type="button" data-dismiss="alert" aria-label="Close")
+					span.icon-forbid(aria-hidden="true")
+		.alert.alert-warning(role="alert")
+			h4= article.title
+			p.lead #{article.viewscount} visualizações (#{article.views.length+' usuários visualizaram'})
+			if article.edits.length
+				h5.icon- Edições
+				ul.list-group.list-group-horizontal
+					each e in article.edits
+						li.list-group-item.icon-divide= e.author.fullname
+							small.pl-3= e.date.toLocaleDateString()
+			form(method='POST' action='')
+				.form-group
+					input#articleid.form-control(type="hidden", name="articleid", required='true', value=article._id)
+				button.btn.btn-outline-primary(type="submit") deletar
+						span.h3.icon-go(aria-hidden="true")

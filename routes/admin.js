@@ -137,5 +137,21 @@ router.post('/p/:id', [
         })
     }
 ])
+router.get('/p/:id/del', [
+    param('id').isMongoId(),
+    function(req, res, next) {
+        const errors = validationResult(req)
+        if(!errors.isEmpty()) {
+            return next()
+        }
+        Article.findById(req.params.id)
+        .lean({virtuals:true})
+        .populate({path: 'edits.author', model: 'Account'})
+        .exec((err, post) => {
+            if (err) { return next(err) }
+            res.render('admin/post_delete', {title: `Deletar ${post.title}`, article: post})
+        })
+    }
+])
 
 module.exports = router;
