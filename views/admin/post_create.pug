@@ -11,6 +11,7 @@ block content
 				button.close(type="button" data-dismiss="alert" aria-label="Close")
 					span.icon-forbid(aria-hidden="true")
 		form(action="" method="post" autocomplete="off")
+			input(type="hidden", name="author", value=account._id)
 			.form-group.row
 				label.col-sm-2.col-form-label(for="title") título *
 				.col-sm-10

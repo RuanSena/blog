@@ -121,7 +121,7 @@ body {
 
 .notepad {
   max-width: 60rem;
-  margin: 1rem auto;
+  margin: 2rem auto;
   background-color: white;
   overflow: hidden;
 }
@@ -136,10 +136,8 @@ body {
 .notepad-body {
   border-bottom: 1px solid #e6e8eb;
 }
-.notepad-body + .notepad-footer {
-  border-bottom: none;
-}
-.notepad-footer {
+.notepad-footer .footer-inner {
+  border-right: 1px solid #e6e8eb;
   border-bottom: 1px solid #e6e8eb;
 }
 .notepad-title {
@@ -151,6 +149,21 @@ body {
   text-decoration: none;
 }
 
+.body-inner h1 {
+  font-size: 1.5em;
+}
+.body-inner h2 {
+  font-size: 1.35em;
+}
+.body-inner h3 {
+  font-size: 1.2em;
+}
+.body-inner h4 {
+  font-size: 1.1em;
+}
+.body-inner h5 {
+  font-size: 1.05em;
+}
 aside .card {
   margin-bottom: 2rem;
 }

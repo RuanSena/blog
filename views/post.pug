@@ -2,9 +2,15 @@ extends layout
 include includes/notepad.pug
 
 block content
-    +post(article)
-    //- article.post
-    //-     header
-    //-         h3= article.title
-    //-         small.icon-time= article.datetime.formated
-    //-     section !{article.content}
+    .container-fluid
+        if account
+            .btn-toolbar.p-3.justify-content-center(role="toolbar")
+                .btn-group(role="group")
+                    a.btn.btn-outline-danger(role="button" href=`/admin/p/${article._id}`)
+                        span.icon-explode
+                        | Deletar
+                    a.btn.btn-outline-dark(role="button" href=`/admin/p/${article._id}`)
+                        span.icon-hammer
+                        | Editar
+                    
+        +post(article)

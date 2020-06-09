@@ -5,12 +5,15 @@ mixin post(a)
 			.label.label-cat(style=`background-color: ${a.category.color}`)
 			.header-inner
 				h3.notepad-title= a.title
-				time.note-date.icon-time(datetime=date.value)= date.fromNow
+				time.note-date.icon-time(datetime=date.value)= date.formated
 		section.notepad-body
 			.label.label-line
 			.body-inner !{a.content}
-		if a.reference
+		if a.reference || a.edits.length
 			footer.notepad-footer
 				.label.label-cat(style=`background-color: ${a.category.color}`)
-				.footer-inner.icon-link
-					a.text-body(href=a.reference target="_blank")= a.reference
+				.footer-inner
+					if a.reference
+						a.text-body.icon-link(href=a.reference target="_blank")= a.reference
+					if a.edits.length
+						small.text-muted.icon-write Última edição #{a.lastedit.fromNow}
