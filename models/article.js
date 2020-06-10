@@ -10,7 +10,7 @@ moment.locale('pt-br')
 var Schema = mongoose.Schema
 
 const viewSchema = new Schema({
-    ip: {type: String, unique: true},
+    ip: {type: String},
     session: {type: String},
     dates: [{type: Date, default: Date.now}]
 })
