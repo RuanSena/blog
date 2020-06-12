@@ -9,17 +9,31 @@ const date = moment().format('YYYY-MM-DD')
 
 router.use(function (req, res, next) {
     if (req.session.accountID) {
+        // when logged check path for not saving
+        if(req.session.referrer) delete req.session.referrer
         next()
     } else {
+        // only saves ref path if log in
+        req.session.referrer = req.originalUrl
         res.redirect('/login')
     }
 })
 
-router.get('/', function (req, res) {
-    res.render('admin/dashboard', { title: 'dashboard' })
+router.get('/', function (req, res, next) {
+    res.render('admin/dashboard', { title: 'Dashboard' })
 });
+// blog data json
+router.get('/p', [
+    function(req, res, next) {
+        res.json({
+            day: {min: moment().hour(0), max: moment().hour(23)},
+            week: {min: moment().day(0), max: moment().day(7)},
+            month: {min: moment().date(1), max: moment().date(31)}
+        })
+    }
+])
 
-router.get('/p/add', function (req, res, next) {
+router.get('/p/new', function (req, res, next) {
     Category.find()
         .lean()
         .exec((err, categories) => {
@@ -27,7 +41,7 @@ router.get('/p/add', function (req, res, next) {
             res.render('admin/post_create', { title: 'Novo post', date, categories })
         })
 })
-router.post('/p/add', [
+router.post('/p/new', [
     body('author').isMongoId(),
     body('title', 'too long').isLength({ min: 1, max: 80 }),
     body('markdown').trim().notEmpty(),
@@ -122,15 +136,15 @@ router.post('/p/:id', [
                 })
         }
         Article.findById(req.params.id, (err, article) => {
-            if(err) {return next()}
+            if (err) { return next() }
             article._id = req.params.id
             article.title = req.body.title
             article.markdown = req.body.markdown
             article.description = req.body.description
             article.reference = req.body.reference
-            article.edits.push({author: req.body.author})
+            article.edits.push({ author: req.body.author })
             article.markModified('edits')
-            article.save({validateBeforeSave: true}, (err, post) => {
+            article.save({ validateBeforeSave: true }, (err, post) => {
                 if (err) { return next(err) }
                 res.redirect('/blog/' + post.slug)
             })
@@ -139,18 +153,18 @@ router.post('/p/:id', [
 ])
 router.get('/p/:id/del', [
     param('id').isMongoId(),
-    function(req, res, next) {
+    function (req, res, next) {
         const errors = validationResult(req)
-        if(!errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             return next()
         }
         Article.findById(req.params.id)
-        .lean({virtuals:true})
-        .populate({path: 'edits.author', model: 'Account'})
-        .exec((err, post) => {
-            if (err) { return next(err) }
-            res.render('admin/post_delete', {title: `Deletar ${post.title}`, article: post})
-        })
+            .lean({ virtuals: true })
+            .populate({ path: 'edits.author', model: 'Account' })
+            .exec((err, post) => {
+                if (err) { return next(err) }
+                res.render('admin/post_delete', { title: `Deletar ${post.title}`, article: post })
+            })
     }
 ])
 

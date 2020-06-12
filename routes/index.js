@@ -34,7 +34,7 @@ router.post('/login', [
         }
         if(acc.password === req.body.password) {
           req.session.accountID = acc._id;
-          res.redirect('/admin')
+          return res.redirect(req.session.referrer || '/admin')
         } else {
           res.render('login', {title: 'log in', email: req.body.email, errors: [{param: 'password', msg: 'incorrect'}]})
         }
