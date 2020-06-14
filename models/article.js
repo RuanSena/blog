@@ -10,9 +10,8 @@ moment.locale('pt-br')
 var Schema = mongoose.Schema
 
 const viewSchema = new Schema({
-    ip: {type: String},
     session: {type: String},
-    dates: [{type: Date, default: Date.now}]
+    date: {type: Date, default: Date.now}
 })
 const editSchema = new Schema({
     date: {type: Date, default: Date.now},
@@ -50,14 +49,6 @@ articleSchema.virtual('etime')
         return moment(this.edits[this.edits.length-1]).fromNow()
     }
     return false
-})
-articleSchema.virtual('viewscount')
-.get(function(){
-    let count = 0;
-    this.views.forEach((v) => {
-        count += v.dates.length
-    })
-    return count
 })
 
 articleSchema.plugin(lean_virtuals)

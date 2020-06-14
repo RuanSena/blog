@@ -15,7 +15,7 @@ block content
 						h2.display-4 Olá, mundo!
 						p.lead Não foi encontrado nenhum post, vamos escrever um agora mesmo!
 						hr.my-4
-						a.btn.btn-primary.btn-lg(href="/admin/p/add") Novo post
+						a.btn.btn-primary.btn-lg(href="/admin/p/new") Novo post
 				footer.feed-footer
 					nav.nav.nav-justified
 						a.btn.nav-item.mx-4.my-2.text-nowrap(role="button" class=left?'btn-outline-primary':'btn-outline-dark disabled', href=left?`/blog${left-1?'?left='+(left-1):''}`:'/blog', tabindex=left?'':'-1', aria-disabled=left?'false':'true') Mais recente
@@ -50,7 +50,7 @@ block content
 										.list-group.list-group-flush
 											each m in months
 												a.list-group-item.list-group-item-action(href=`/blog/a?m=${m.month}`)= m.name
-													span.px-2.ml-2.badge.badge-dark= m.items
+													span.ml-2.badge.badge-dark= m.items
 							else
 								.card.mb-0
 									.card-header(id=`heading${year}`)

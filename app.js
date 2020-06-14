@@ -3,6 +3,7 @@ var createError = require('http-errors');
 var express = require('express');
 var session = require('express-session')
 var mongoose = require('mongoose')
+var mongoStore = require('connect-mongo')(session)
 var logger = require('morgan');
 var path = require('path');
 var Account = require('./models/account');
@@ -15,6 +16,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
+
 const app = express();
 
 // view engine setup
@@ -23,16 +25,22 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(session({secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true}));
+app.use(session({ secret: process.env.SESSION_SECRET,
+    saveUninitialized: true,
+    resave: false,
+    store: new mongoStore({ mongooseConnection: mongoose.connection, ttl: 3 * 24 * 3600 })
+  }
+));
 app.use(express.static(path.join(__dirname, 'node_modules/jquery/dist')));
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
+app.use(express.static(path.join(__dirname, 'node_modules/chart.js/dist')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
   if(req.session.accountID) {
     Account.findById(req.session.accountID).exec((err, acc) => {
       if (err) {
         delete req.session.accountID;
-        next();
+        return next();
       }
       res.locals.account = acc;
       next()

@@ -31,10 +31,10 @@ router.get('/', [
                     .lean({ virtuals: true })
                     .sort('-date')
                     .skip(req.query.items * req.query.left)
-                    .limit(req.query.items+1)
+                    .limit(req.query.items + 1)
                     .populate('category')
                     .exec((err, articles) => {
-                        if(err) { return cb(err) }
+                        if (err) { return cb(err) }
                         articles = articles[req.query.items] ? [articles.slice(0, req.query.items), true] : [articles, false]
                         cb(null, articles)
                     })
@@ -51,7 +51,7 @@ router.get('/', [
                     if (err) { return cb(err) }
                     archives = archives.reduce((dates, group) => {
                         if (!dates[group._id.year]) dates[group._id.year] = [];
-                        dates[group._id.year].unshift({ month: group._id.month, name: months[group._id.month - 1], items: group.count})
+                        dates[group._id.year].unshift({ month: group._id.month, name: months[group._id.month - 1], items: group.count })
                         return dates
                     }, {})
                     cb(null, archives)
@@ -146,34 +146,31 @@ router.get('/:slug', [
         if (!errors.isEmpty()) {
             return next()
         }
-        Article.findOne({ slug: req.params.slug })
-            .populate('category')
-            .exec((err, article) => {
-                if (err || !article) { return next() }
-                let ip = req.ip || req.connection.remoteAddress
-                for (let view of article.views) {
-                    if (view.ip === ip) {
-                        if (req.sessionID === view.session) {
-                            // ip in same session don't save
-                            return res.render('post', { title: article.title, article })
-                        } else {
-                            // count view
-                            view.session = req.sessionID
-                            view.dates.push(Date.now())
-                            ip = false;
-                            break;
-                        }
-                    }
-                }
-                if (ip) {
-                    article.views.push({ ip, session: req.sessionID, dates: [Date.now()] })
-                }
-                article.markModified('views')
-                article.save(function (err, article) {
-                    if(err){return next(err)}
+        if (!req.session.views) {
+            req.session.views = []
+        }
+        if (req.session.views.includes(req.params.slug)) {
+            Article.findOne({ slug: req.params.slug })
+                .populate('category')
+                .lean({ virtuals: true })
+                .exec((err, article) => {
+                    if (err || !article) { return next() }
                     res.render('post', { title: article.title, article })
                 })
-            })
+        } else {
+            Article.findOne({ slug: req.params.slug })
+                .populate('category')
+                .exec((err, article) => {
+                    if (err || !article) { return next() }
+                    article.views.push({ session: req.sessionID, date: +now })
+                    article.markModified('views')
+                    article.save(function (err, article) {
+                        if (err) { return next(err) }
+                        req.session.views.push(req.params.slug)
+                        res.render('post', { title: article.title, article })
+                    })
+                })
+        }
     }
 ])
 
