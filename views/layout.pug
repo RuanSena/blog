@@ -20,10 +20,9 @@ html(lang='en')
 									img(src=account.gravatar+'&s=28').mr-1
 									span.d-none.d-md-inline= account.name
 								.dropdown-menu.text-center(aria-labelledby="dropdownAcc")
-									a.dropdown-item(href="") Alterar senha
-									a.dropdown-item(href="") Alterar email
-									.dropdown-divider
 									a.dropdown-item(href="/admin") Painel
+									.dropdown-divider
+									a.dropdown-item(href="/logout") Sair
 		main
 			block content
 		block scripts

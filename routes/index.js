@@ -42,5 +42,13 @@ router.post('/login', [
     }
   }
 ])
+router.get('/logout', function(req, res, next) {
+  if(req.session.accountID) {
+    delete req.session.accountID;
+    res.redirect('back')
+  } else {
+    res.redirect('back')
+  }
+})
 
 module.exports = router;
