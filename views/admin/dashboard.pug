@@ -1,7 +1,29 @@
 extends ../layout
 
 block content
-    .jumbotron
-        h2 welcome master
-        .display-2.icon-attract
-    img(src=account.gravatar, alt=account.name)
+	section.container-fluid.py-3
+		h3 Dashboard
+		hr
+		.row.row-cols-sm-2.flex-column.flex-sm-row.bg-white.p-3
+			.col.col-sm-3.mb-3.mb-sm-0
+				h5.icon-schedule Intervalo
+				ul.nav.nav-pills.nav-justified.text-center.flex-sm-column
+					a.interval.nav-item.nav-link(href='/admin/p?interval=day') Dia
+					a.interval.nav-item.nav-link.active(href='/admin/p?interval=week') Semana
+					a.interval.nav-item.nav-link(href='/admin/p?interval=month') Mês
+			.col.col-sm-9
+				canvas#views(width="400" height="400")
+	//- .jumbotron
+		h2 Welcome
+			span.pl-3.icon-attract
+	
+	//- img(src=account.gravatar, alt=account.name)
+
+append scripts
+	script.
+		$(function(){
+			const intervalItems = $('.interval')
+			intervalItems.click()
+		})
+	script(src="/chart.min.js")
+	script(src="/javascripts/dashboard.js")

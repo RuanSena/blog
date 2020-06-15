@@ -5,12 +5,13 @@ var Category = require('../models/category')
 var { body, param, validationResult } = require('express-validator')
 var moment = require('moment-timezone')
 moment.tz.setDefault('America/Bahia')
-const date = moment().format('YYYY-MM-DD')
+var now = moment()
+const date = now.format('YYYY-MM-DD')
 
 router.use(function (req, res, next) {
     if (req.session.accountID) {
         // when logged check path for not saving
-        if(req.session.referrer) delete req.session.referrer
+        if (req.session.referrer) delete req.session.referrer
         next()
     } else {
         // only saves ref path if log in
@@ -24,12 +25,50 @@ router.get('/', function (req, res, next) {
 });
 // blog data json
 router.get('/p', [
-    function(req, res, next) {
-        res.json({
-            day: {min: moment().hour(0), max: moment().hour(23)},
-            week: {min: moment().day(0), max: moment().day(7)},
-            month: {min: moment().date(1), max: moment().date(31)}
-        })
+    function (req, res, next) {
+        const intervals = {
+            day: now.subtract(1, 'day').toDate(),
+            week: now.subtract(1, 'week').toDate(),
+            month: now.subtract(1, 'month').toDate()
+        }
+        Article.aggregate([
+            { $unwind: "$views" },
+            {
+                $match: {
+                    "views.date": { $gte: intervals.month }
+                }
+            },
+            {
+                $group: {
+                    _id: "views",
+                    "day": {
+                        $push: {
+                            $cond: {
+                                if: { $gte: ["$views.date", intervals.day] },
+                                then: {article: "$_id", date: "$views.date"},
+                                else: null
+                            }
+                        }
+                    },
+                    "week": {
+                        $push: {
+                            $cond: {
+                                if: { $gte: ["$views.date", intervals.week] },
+                                then: {article: "$_id", date: "$views.date"},
+                                else: null
+                            }
+                        }
+                    },
+                    "month": {
+                        $push: {article: "$_id", date: "$views.date"}
+                    }
+                }
+            }
+        ])
+            .exec((err, views) => {
+                if (err) { return next(err) }
+                res.send(views)
+            })
     }
 ])
 
