@@ -2,11 +2,10 @@ var express = require('express');
 var router = express.Router();
 var Article = require('../models/article')
 var Category = require('../models/category')
-var { body, param, validationResult } = require('express-validator')
+var { body, param, query, validationResult } = require('express-validator')
 var moment = require('moment-timezone')
 moment.tz.setDefault('America/Bahia')
-var now = moment()
-const date = now.format('YYYY-MM-DD')
+const date = moment().format('YYYY-MM-DD')
 
 router.use(function (req, res, next) {
     if (req.session.accountID) {
@@ -23,51 +22,50 @@ router.use(function (req, res, next) {
 router.get('/', function (req, res, next) {
     res.render('admin/dashboard', { title: 'Dashboard' })
 });
-// blog data json
+
 router.get('/p', [
+    query('interval').trim().isAlpha(),
     function (req, res, next) {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return next()
+        }
         const intervals = {
-            day: now.subtract(1, 'day').toDate(),
-            week: now.subtract(1, 'week').toDate(),
-            month: now.subtract(1, 'month').toDate()
+            "day": moment().subtract(1, 'day').toDate(),
+            "week": moment().subtract(1, 'week').toDate(),
+            "month": moment().subtract(1, 'month').toDate()
+        }
+        if (!intervals[req.query.interval]) {
+            return next()
         }
         Article.aggregate([
+            // -limit by posts publish date
+            // 
             { $unwind: "$views" },
             {
+                // views in last interval of subtract
                 $match: {
-                    "views.date": { $gte: intervals.month }
+                    "views.date": { $gte: intervals[req.query.interval] }
                 }
             },
             {
+                // map values
                 $group: {
-                    _id: "views",
-                    "day": {
-                        $push: {
-                            $cond: {
-                                if: { $gte: ["$views.date", intervals.day] },
-                                then: {article: "$_id", date: "$views.date"},
-                                else: null
-                            }
-                        }
-                    },
-                    "week": {
-                        $push: {
-                            $cond: {
-                                if: { $gte: ["$views.date", intervals.week] },
-                                then: {article: "$_id", date: "$views.date"},
-                                else: null
-                            }
-                        }
-                    },
-                    "month": {
-                        $push: {article: "$_id", date: "$views.date"}
-                    }
+                    _id: {article: "$_id", "month": {$dayOfMonth: {date:"$views.date", timezone: "America/Bahia"}}, "week": {$dayOfWeek: {date:"$views.date", timezone: "America/Bahia"}}, "day": {$hour: {date:"$views.date", timezone: "America/Bahia"}}},
+                }
+            },
+            {
+                // group by values
+                $group: {
+                    _id: {interval: req.query.interval, value: `$_id.${req.query.interval}` },
+                    articles: { $push: "$_id.article" }
                 }
             }
         ])
-            .exec((err, views) => {
+            .exec((err, result) => {
                 if (err) { return next(err) }
-                res.send(views)
+                console.log(intervals[req.query.interval] ,req.query.interval, result)
+                res.json(result)
             })
     }
 ])
