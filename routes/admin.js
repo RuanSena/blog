@@ -51,20 +51,38 @@ router.get('/p', [
             {
                 // map values
                 $group: {
-                    _id: {article: "$_id", "month": {$dayOfMonth: {date:"$views.date", timezone: "America/Bahia"}}, "week": {$dayOfWeek: {date:"$views.date", timezone: "America/Bahia"}}, "day": {$hour: {date:"$views.date", timezone: "America/Bahia"}}},
+                    _id: {"month": {$dayOfMonth: {date:"$views.date", timezone: "America/Bahia"}}, "week": {$dayOfWeek: {date:"$views.date", timezone: "America/Bahia"}}, "day": {$hour: {date:"$views.date", timezone: "America/Bahia"}}},
+                    count: {$sum: 1}
                 }
             },
             {
                 // group by values
                 $group: {
-                    _id: {interval: req.query.interval, value: `$_id.${req.query.interval}` },
-                    articles: { $push: "$_id.article" }
+                    _id: `$_id.${req.query.interval}`,
+                    total: { $sum: "$count" },
                 }
             }
         ])
             .exec((err, result) => {
                 if (err) { return next(err) }
-                console.log(intervals[req.query.interval] ,req.query.interval, result)
+                result = result.reduce((dataset, data)=> {
+                    // normalize value index
+                    if(req.query.interval == "day") {
+                        dataset[data._id] = data.total
+                        return dataset
+                    }
+                    dataset[data._id -1] = data.total
+                    return dataset
+                }, [])
+                let fv, lv
+                result.forEach((val, i) => {
+                    if(!fv) fv = i
+                    lv = i
+                })
+                while(fv <= lv) {
+                    result[fv] = result[fv] || 0
+                    fv++
+                }
                 res.json(result)
             })
     }

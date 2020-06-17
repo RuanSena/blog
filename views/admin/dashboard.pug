@@ -8,9 +8,9 @@ block content
 			.col.col-sm-3.mb-3.mb-sm-0
 				h5.icon-schedule Intervalo
 				ul.nav.nav-pills.nav-justified.text-center.flex-sm-column
-					a.interval.nav-item.nav-link(href='/admin/p?interval=day') Dia
-					a.interval.nav-item.nav-link.active(href='/admin/p?interval=week') Semana
-					a.interval.nav-item.nav-link(href='/admin/p?interval=month') Mês
+					a.interval.nav-item.nav-link.active(href='/admin/p?interval=day' data-interval='day') Dia
+					a.interval.nav-item.nav-link(href='/admin/p?interval=week' data-interval='week') Semana
+					a.interval.nav-item.nav-link(href='/admin/p?interval=month' data-interval='month') Mês
 			.col.col-sm-9
 				canvas#views(width="400" height="400")
 	//- .jumbotron
@@ -20,10 +20,5 @@ block content
 	//- img(src=account.gravatar, alt=account.name)
 
 append scripts
-	script.
-		$(function(){
-			const intervalItems = $('.interval')
-			intervalItems.click()
-		})
 	script(src="/chart.min.js")
 	script(src="/javascripts/dashboard.js")
